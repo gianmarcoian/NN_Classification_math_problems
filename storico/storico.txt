@@ -1,0 +1,129 @@
+una volta creati i dizionari train_d e test_d, in cui come coppia chiave-valore ho assegnato la coppia esercizi-etichette, trasformo i dati in un dataframe di Pandas.
+
+
+al tokenizer mando tutti i dati(sia di test che di train) per inidicizzare nel modo corretto le parole, come scritto nel file per non avere a stesso indice diverse parole)
+
+
+Primo assegnamento per:
+	dimensione del vocabolario: 500
+	dimensione dell'embedding: 300
+	dimensione dell'uscita dal blocco LSTM
+
+
+modello iniziale (sul file di progetto chiamto " modello ", corrisponde al modello_alpha):
+	(strato di embedding)
+	strato LSTM
+	strato denso di 7 neuroni per l'uscita, con f di attivazione softmax
+	
+	caratteristiche:	(sequential)
+						funzione di loss: categorical_crossentropy
+						ottimizzatore= adam 
+						metrica= accuratezza
+ 
+risultati (con 50 epoche, dimensione batch:50):
+	impostate 50 epoche, si raggiunge un'accuratezza di 1 sui dati di training dopo 35 epoche, chiaro overfitting(poi oscilla tra 1 e 0.998).
+	
+	risultati sui dati di test:
+								accuratezza: 0.605714
+
+
+
+modello beta:
+	al modello_alpha viene sostituito il layer LSTM con un bidirectional LSTM
+	
+	risulati:
+		training: 50esima epoca -> loss: 0.2351 - accuracy: 0.9855
+		
+		test:
+				test loss, test acc: [1.408748745918274, 0.6057142615318298]
+
+modello_beta2: 
+	strati modello:
+		(embedding)
+		bidirectional LSTM
+		LSTM
+		bidirectional LSTM
+		LSTM
+		strato denso d'uscita con softmax
+	
+	risulati:
+		training: 	Epoch 50/50	loss: 0.4412 - accuracy: 0.9565 - 8s/epoch - 2s/step
+		test: test loss, test acc: [1.5599178075790405, 0.47428572177886963]
+
+
+nei modelli gamma utilizzo dei data di validations
+	
+	modello gamma_1:
+		strati:	
+			(embedding)
+			global average pooling
+			denso da 16 neuroni, con f di attivazione relu
+			uscita da 7 neuroni, softmax
+		ottimizzatore: adam
+		f di loss: categorical_crossentropy
+		metrica: accuracy
+		nel fit del modello utilizzo dei dati di validation. epoche 50, batch size 50
+		
+		risultati 
+			training: Epoch 50/50: loss: 0.4856 - accuracy: 0.8965 - val_loss: 0.9157 - val_accuracy: 0.6714
+			
+			test: [1.037746548652649, 0.6000000238418579]
+			
+			
+	
+	modello_gamma_2: modello beta + validation 
+		risulati:
+			training: 50/50:loss: 0.2382 - accuracy: 0.9876 - val_loss: 1.4331 - val_accuracy: 0.5571
+			
+			test: [1.5837047100067139, 0.5828571319580078]
+			
+			probabile overfitting, provo con 30 epoche 
+			
+			training: 30/30: loss: 0.7373 - accuracy: 0.9089 - val_loss: 1.3320 - val_accuracy: 0.5000
+			test: [1.457584261894226, 0.48571428656578064]
+
+	
+	modello_gamma_4:
+		dopo strato di embedding, una media con global average pooling, poi struttura romboidale  16 32 
+		
+		30 epoche, provato un learning rate molto basso, 0.001. diverse metriche :
+		Epoch 30/30
+			loss: 0.6340 - accuracy: 0.7081 - precision: 0.7344 - recall: 0.6812 - val_loss: 4.3083 - val_accuracy: 0.3286 - val_precision: 0.3492 - val_recall: 0.3143 
+			molto male. 
+			aumento di epoche e LR
+			50 epoche e 0.1 LR
+			Epoch 50/50
+			loss: 0.1587 - accuracy: 0.9337 - precision: 0.9374 - recall: 0.9296 - val_loss: 3.1927 - val_accuracy: 0.6000 - val_precision: 0.6087 - val_recall: 0.6000 - 222ms/epoch - 9ms/step
+		cambio di ottimizzatore: -> RMSPROP, stesse epoche, LR sempre a 0.1
+		accuracy non sale sopra lo 0.2
+		
+		ritorno con adam,  accuracy: 0.5600 - precision: 0.5575 - recall: 0.5543 sui dati di test
+		
+		sempre sul modello gamma 4 al variare delle epoche cambia vertiginosamente l'accuracy. Con 65 epoche l'accuracy non sale mai più dello 0.2
+		basta impostare un range da 45 a 55 per avere un incremento esponenziale sull'accuracy
+		
+		con 16 16 32 32 16 16 ho un'accuracy dello 0.8 sui training data.
+			quano rimuovo uno dei layer da 32 cala vertiginosamente (0.18)
+			stesso provando a inserire 1 o 2 layer da 64
+		 tentativi ulteriori rimuovendo lo strato di global average pooling e inserendo un bidirectional LSTM
+	
+	migliore rimane gamma_1
+	modifiche su gamma 1 in termini di dropout e learning rate
+	
+	
+	adattamento di gamma1 a gamma4:
+	
+	Modello gamma4 rivisto, schema romboidale adattato all'ultimo layer(di output, da 7):
+		7
+		14
+		28
+		28
+		14
+		7
+	con global average pooling invece che LSTM
+	con 55 epoche e LR di 0.05 : accuracy: 0.9648 sui dati di training
+								val_accuracy: 0.6857 (validation set)
+											0.59 sui dati di test
+	(batch size:20)
+	
+	

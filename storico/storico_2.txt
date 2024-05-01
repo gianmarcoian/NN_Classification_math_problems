@@ -1,0 +1,192 @@
+modello_gamma_1 
+	embedding da 100
+	
+	epoche:60
+		60/60
+		loss: 0.2438 - accuracy: 0.9834 - val_loss: 1.0172 - val_accuracy: 0.6857
+		
+		test data:
+		test loss, test acc: [1.0516331195831299, 0.6971428394317627]
+
+	
+	epoche:70
+		70/70:
+		loss: 0.2114 - accuracy: 0.9772 - val_loss: 0.8840 - val_accuracy: 0.7714
+		
+		test data:
+		test loss, test acc: [0.899631679058075, 0.7200000286102295]
+		
+		non sembra andare in overfitting
+	
+	epoche:80
+		80/80:
+		loss: 0.1066 - accuracy: 0.9979 - val_loss: 0.8947 - val_accuracy: 0.7429
+		
+		test data:
+		test loss, test acc: [1.0010082721710205, 0.6742857098579407]		
+		diminuita accuracy sui test, e aumentata la loss
+		
+	epoche 90
+		90/90
+		loss: 0.1111 - accuracy: 0.9959 - val_loss: 1.3101 - val_accuracy: 0.6714
+		
+		test data:
+		test loss, test acc: [1.3406938314437866, 0.6057142615318298]
+		chiaro overfitting
+		
+	
+	epoche 75
+		75/75
+		loss: 0.1085 - accuracy: 1.0000 - val_loss: 0.9974 - val_accuracy: 0.6857
+		
+		test data:
+		test loss, test acc: [1.0552892684936523, 0.6800000071525574]
+
+
+lavoro quindi su intorno di 70		
+	
+	epoche 72
+		72/72
+		loss: 0.1643 - accuracy: 0.9938 - val_loss: 1.0569 - val_accuracy: 0.6857
+		
+		test data:
+		[0.9866089820861816, 0.6857143044471741]
+
+	
+	epoche 71
+		71/71
+		loss: 0.1829 - accuracy: 0.9793 - val_loss: 0.9676 - val_accuracy: 0.7000
+		
+		test data:
+		test loss, test acc: [0.9131107926368713, 0.7085714340209961]
+		
+	epoche 69:
+		69/69
+		loss: 0.1494 - accuracy: 0.9959 - val_loss: 1.0359 - val_accuracy: 0.6429
+		
+		test data:
+		test loss, test acc: [0.9135000109672546, 0.668571412563324]
+		
+	
+
+SEMPRE SU MODELLO DELTA
+LR=0.1
+EPOCHE 70
+raggiunge accuratezza di 1 sui dati di training alla 24esima epoc
+70/70: loss: 0.0107 - accuracy: 1.0000 - val_loss: 2.2882 - val_accuracy: 0.5571
+chiaro overfitting
+
+
+40 epoche
+anche qui accuracy a 1 dopo 26 epoche
+40/40 loss: 0.0082 - accuracy: 1.0000 - val_loss: 2.0645 - val_accuracy: 0.5571
+
+
+cambio LR con valore di default, passo solo come paraetro al compile optimizer='adam', e non esplicito valore del LR
+
+con 30 epoche :
+	30/30:
+	 loss: 1.5450 - accuracy: 0.6480 - val_loss: 1.7424 - val_accuracy: 0.4429
+	
+	50:
+	50/50: loss: 0.6482 - accuracy: 0.9420 - val_loss: 1.2050 - val_accuracy: 0.5857
+	
+	70 epoche;
+	70/70 : loss: 0.3480 - accuracy: 0.9752 - val_loss: 0.9839 - val_accuracy: 0.6857
+	data test :	test loss, test acc: [1.026170015335083, 0.691428542137146]
+
+	75 epoche:
+	75/75: loss: 0.3464 - accuracy: 0.9772 - val_loss: 1.1222 - val_accuracy: 0.6429
+	data test: test loss, test acc: [1.1238831281661987, 0.668571412563324]
+	
+	inizia overfitting
+	
+	72 epoche:
+	72/72: loss: 0.3970 - accuracy: 0.9607 - val_loss: 1.0514 - val_accuracy: 0.6143
+	data test: test loss, test acc: [0.9653379321098328, 0.7085714340209961]
+	//faticasul validation ste, ma sui dati di test più valido
+	
+	73 epoche:
+	73/73: loss: 0.3445 - accuracy: 0.9648 - val_loss: 1.0475 - val_accuracy: 0.6429
+	dati di test: test loss, test acc: [1.0497276782989502, 0.6342856884002686]
+	//sembra quindi essere in overfitting 
+	
+
+modello DELTA_2, modello delta ma lascio l'embedding preaddestrato tramite Word2Vec, pesi dell'embedding NON TRAINABLE (passo al layer embedding l'argomento trainable come False)
+(alleno solo i pesi dei layer successivi)
+
+stessa struttura 
+
+stessi parametri iniziali con batch size 50 
+
+60 epoche, 50 batch_size
+	60/60:
+	loss: 1.9466 - accuracy: 0.1449 - val_loss: 1.9464 - val_accuracy: 0.1429
+	
+70 epoche:
+	70/70:
+	loss: 1.9460 - accuracy: 0.1470 - val_loss: 1.9461 - val_accuracy: 0.1429
+
+90 epoche:
+	90/90:
+	 loss: 1.9462 - accuracy: 0.1449 - val_loss: 1.9465 - val_accuracy: 0.1429
+
+provo ad aumentare Learning Rate
+LR=0.5
+
+90 epoche
+	90/90:
+	loss: 1.9470 - accuracy: 0.1263 - val_loss: 1.9463 - val_accuracy: 0.1429
+	
+aumento LR -> LR=0.2
+	90/90:
+	loss: 1.9549 - accuracy: 0.1346 - val_loss: 1.9500 - val_accuracy: 0.1429
+
+lr=0.9
+	90/90:
+	loss: 1.9771 - accuracy: 0.1511 - val_loss: 1.9646 - val_accuracy: 0.1429
+
+lr di default, epoche 73
+	73/73: loss: 1.9457 - accuracy: 0.1449 - val_loss: 1.9463 - val_accuracy: 0.1429
+	
+	dati di test:
+		test loss, test acc: [1.9442572593688965, 0.18285714089870453]
+		
+
+provo a modellare diversamente i layer successivi allo strato di embedding, per capire se allenando solo i pesi di questi nuovi layer 
+e mantenendo gli embedding di word2Vec posso costruire un modello che comunque mi arriva ad avere un'accuratezza accettabile
+
+modello_delta_3:
+dopo strato di emb, e GlobalAveragPooling ho una struttura romboidale : 7 14 28
+stesso strto di output
+
+70 epoche, stesso batch_size(50)
+
+70/70: loss: 1.9457 - accuracy: 0.1304 - val_loss: 1.9462 - val_accuracy: 0.1429
+
+il modello non riesce ad aumentare il valore delle sue predizioni in termini di accuratezza.
+
+provo a eliminare lo strato di GlobalAveragPooling. lo sostituisco con LSTM bidirezionali e unidirezionali
+struttura modello delta_4
+ Layer (type)                Output Shape              Param #   
+=================================================================
+ embedding_4 (Embedding)     (None, 185, 100)          460500    
+                                                                 
+ bidirectional (Bidirectiona  (None, 185, 20)          8880      
+ l)                                                              
+                                                                 
+ lstm_1 (LSTM)               (None, 185, 10)           1240      
+                                                                 
+ bidirectional_1 (Bidirectio  (None, 185, 20)          1680      
+ nal)                                                            
+                                                                 
+ lstm_3 (LSTM)               (None, 10)                1240      
+                                                                 
+ dense_11 (Dense)            (None, 16)                176       
+                                                                 
+ dense_12 (Dense)            (None, 7)                 119       
+                                                              
+
+stesso batch_size, 70 epoche
+70/70:loss: 1.9457 - accuracy: 0.1449 - val_loss: 1.9461 - val_accuracy: 0.1429
+non riesce comunque ad ottenere tramite il resto della rete una predizione corretta degli esercizi
